@@ -1,25 +1,45 @@
+USE sakila;
+
+-- 1a. Display the first and last names of all actors from the table actor.
 select * from actor;
+-- 1b. Display the first and last name of each actor in a single column in upper case letters. Name the column Actor Name.
 select first_name,last_name from actor;
 alter table actor
 add Actor_Name varchar(200) ; 
 select first_name,last_name, Actor_Name from actor;
 update actor set Actor_Name = concat(first_name, ' ' ,last_name) ;
-select * from actor where first_name = "John";
+
+-- 2a. You need to find the ID number, first name, and last name of an actor, of whom you know only the first name, "Joe." What is one query would you use to obtain this information?
+
+select * from actor where first_name = "Joe";
+
+-- 2b. Find all actors whose last name contain the letters GEN:
 select * from actor where last_name like "%GEN%";
+
+-- 2c. Find all actors whose last names contain the letters LI. This time, order the rows by last name and first name, in that order:
+
 select last_name,first_name from actor where last_name like "%LI%";
+-- 2d. Using IN, display the country_id and country columns of the following countries: Afghanistan, Bangladesh, and China:
 
 SELECT  country_id, country FROM country WHERE country IN ("Afghanistan", "Bangladesh", "China");
+-- 3a. You want to keep a description of each actor. You don't think you will be performing queries on a description, so create a column in the table actor named description and use the data type BLOB (Make sure to research the type BLOB, as the difference between it and VARCHAR are significant).
 
 alter table actor
 add Description blob(200);
-select * from actor;
 
+-- 3b. Very quickly you realize that entering descriptions for each actor is too much effort. Delete the description column.
 ALTER TABLE actor DROP COLUMN Description;
+-- 4a. List the last names of actors, as well as how many actors have that last name.
+SELECT COUNT(last_name),last_name
+FROM actor
+GROUP BY last_name;
+-- 4b. List last names of actors and the number of actors who have that last name, but only for names that are shared by at least two actors
 
 SELECT COUNT(last_name),last_name
 FROM actor
 GROUP BY last_name
 HAVING COUNT(last_name) >1;
+ -- 4c. The actor HARPO WILLIAMS was accidentally entered in the actor table as GROUCHO WILLIAMS. Write a query to fix the record.
 
 UPDATE actor
 SET
@@ -28,6 +48,9 @@ WHERE
   first_name ='Groucho'
   and
 	last_name = 'Williams';
+    
+-- 4d. Perhaps we were too hasty in changing GROUCHO to HARPO. It turns out that GROUCHO was the correct name after all! In a single query, if the first name of the actor is currently HARPO, change it to GROUCHO.
+   
 UPDATE actor
 SET
   first_name = REPLACE('Groucho', 'first_name','HARPO')
